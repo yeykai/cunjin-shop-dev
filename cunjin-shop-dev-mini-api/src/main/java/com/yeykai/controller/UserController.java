@@ -45,7 +45,7 @@ public class UserController {
 //		
 //			System.out.println(userId);
 			//文件保存的命名空间
-			String fileSpace="D:/cunjin-xianyu-test";
+			String fileSpace="/Users/chun/IdeaProjects/shopProject/cunjin-xianyu-test";
 			//保存到数据库的相对路径
 //			String uploadPathDB="/"+userId+"/face";
 			FileOutputStream fileOutputStream=null;
