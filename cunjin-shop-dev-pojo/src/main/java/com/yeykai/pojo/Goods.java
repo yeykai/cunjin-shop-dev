@@ -22,7 +22,11 @@ public class Goods {
 
     private String address;
 
-    private String images;
+    @Column(name = "goods_num")
+    private Integer goodsNum;
+
+    @Column(name = "goods_desc")
+    private String goodsDesc;
 
     /**
      * @return id
@@ -122,17 +126,32 @@ public class Goods {
         this.address = address;
     }
 
+
     /**
-     * @return images
+     * @return goods_num
      */
-    public String getImages() {
-        return images;
+    public Integer getGoodsNum() {
+        return goodsNum;
     }
 
     /**
-     * @param images
+     * @param goodsNum
      */
-    public void setImages(String images) {
-        this.images = images;
+    public void setGoodsNum(Integer goodsNum) {
+        this.goodsNum = goodsNum;
+    }
+
+    /**
+     * @return goods_desc
+     */
+    public String getGoodsDesc() {
+        return goodsDesc;
+    }
+
+    /**
+     * @param goodsDesc
+     */
+    public void setGoodsDesc(String goodsDesc) {
+        this.goodsDesc = goodsDesc;
     }
 }

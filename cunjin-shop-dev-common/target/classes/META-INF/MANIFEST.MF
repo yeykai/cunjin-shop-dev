@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: cunjin-shop-dev-common
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: ￥ﾏﾶ￨ﾋﾱ￩ﾓﾠ
+Implementation-Vendor-Id: com.yeykai
+Build-Jdk: 1.8.0_171
+Implementation-URL: http://projects.spring.io/spring-boot/cunjin-shop-
+ dev/cunjin-shop-dev-common/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

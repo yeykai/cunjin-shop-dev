@@ -59,7 +59,7 @@ public class WXLoginController {
 	
 	
 	@GetMapping("/wxLogin")
-	public IMoocJSONResult wxLogin(String code) {	
+	public IMoocJSONResult wxLogin(String code,String signature, String rawData, String encryptedData, String iv) {	
 		//微信接口地址
 		String url = "https://api.weixin.qq.com/sns/jscode2session";
 		//将code,appid,appsecret存入map
@@ -72,15 +72,53 @@ public class WXLoginController {
 		//使用http客户端工具完成交换请求，获得包含openId和session_key的字符串数组
 		String wxResult = HttpClientUtil.doGet(url, param);
 		System.out.println("交换到的数据为："+wxResult);
-		//随机生成一段随机数
+        
+		//解析json格式的str
+        JSONObject json = JSONObject.parseObject(wxResult);
+        String sessionKey = json.getString("session_key");
+        System.out.println("session_key:"+sessionKey);
+        System.out.println("rawData:"+rawData);
+        System.out.println("signature:"+signature);
+		
+        //随机生成一段随机数
          int hashCodeV = UUID.randomUUID().toString().hashCode();
          if (hashCodeV < 0) {
              hashCodeV = -hashCodeV;
          }
+         
          //生成自定义登录态
          String thirdSession = new Random(10).nextInt(8) + 1 + String.format("%015d", hashCodeV);	
 		// 存入redis,加入user-redis-session:作为前缀，方便管理。
 		redis.set("Wxuser-redis-session:" + thirdSession,wxResult,1000 * 60 * 30);
+
+		
+        //身份校验
+        if (!this.wxService.getUserService().checkUserInfo(sessionKey, rawData, signature)) {
+            return IMoocJSONResult.errorMsg("check userInfo fail");
+        }
+        
+        // 解密用户信息,并注册到数据库中
+        WxMaUserInfo userInfo = this.wxService.getUserService().getUserInfo(sessionKey, encryptedData, iv);
+        Users wxuser = wxUserService.queryUserInfo(userInfo.getOpenId());
+		if (wxuser == null) {
+			String userId = sid.nextShort();
+			Users wxUserInfo = new Users();
+			wxUserInfo.setId(userId);
+			wxUserInfo.setGender(userInfo.getGender());
+			wxUserInfo.setOpenid(userInfo.getOpenId());
+			wxUserInfo.setNickname(userInfo.getNickName());
+			wxUserInfo.setCity(userInfo.getCity());
+			wxUserInfo.setRegisterTime(new Date());
+			wxUserInfo.setAvatarUrl(userInfo.getAvatarUrl());
+			wxUserInfo.setFansCounts(0);
+			wxUserInfo.setFollowCounts(0);
+			wxUserInfo.setReceiveLikeCounts(0);
+			wxUserService.saveUser(wxUserInfo);
+			System.out.println("注册成功");
+		}else {
+			System.out.println("有此用户");
+		}
+        
 		//向小程序返回登录态
 		return IMoocJSONResult.ok(thirdSession);
 	}

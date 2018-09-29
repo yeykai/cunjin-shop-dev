@@ -1,0 +1,6 @@
+com\yeykai\mapper\OrdersMapper.class
+com\yeykai\mapper\CommentsMapper.class
+com\yeykai\mapper\GoodsMapper.class
+com\yeykai\mapper\UsersMapper.class
+com\yeykai\mapper\UsersLikeGoodsMapper.class
+com\yeykai\mapper\UsersFansMapper.class

@@ -1,0 +1,5 @@
+com\yeykai\controller\HelloWorldController.class
+com\yeykai\Swagger2.class
+com\yeykai\Application.class
+com\yeykai\controller\WXLoginController.class
+com\yeykai\WxMaConfiguration.class
