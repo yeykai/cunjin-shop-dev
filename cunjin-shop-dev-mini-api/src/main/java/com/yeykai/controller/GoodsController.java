@@ -3,6 +3,8 @@ package com.yeykai.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,7 @@ import com.yeykai.pojo.GoodsImg;
 import com.yeykai.pojo.Users;
 import com.yeykai.service.GoodsService;
 import com.yeykai.utils.IMoocJSONResult;
+import com.yeykai.utils.PagedResult;
 import com.yeykai.utils.RedisOperator;
 
 import io.swagger.annotations.Api;
@@ -76,6 +79,7 @@ public class GoodsController {
 		goods.setLikeCounts(0);
 		goods.setGoodsName(goodsName);
 		goods.setPrice(goodsPrice);
+		goods.setCreateTime(new Date());
 		goods.setGoodsNum(goodsNum);
 		
 		goodsService.saveGoods(goods);
@@ -137,6 +141,33 @@ public class GoodsController {
 			
 			return IMoocJSONResult.ok("上传成功");
 	
+	}
+	
+	
+	@PostMapping(value="/showAll")
+	public IMoocJSONResult showAll(Integer page,Integer pageSize){
+		
+		if (page==null) {
+			page=1;
+		}
+		
+		if (pageSize==null) {
+			pageSize = 6;
+		}
+		
+		PagedResult result = goodsService.getAllGoods(page, pageSize);
+		return IMoocJSONResult.ok(result);
+			
+	}
+	
+	@PostMapping(value="/queryImgList")
+	public IMoocJSONResult queryImgList(String goodsId){
+		
+		List<String> imgList = goodsService.queryGoodsImg(goodsId);
+		System.out.println(imgList);
+		
+		return IMoocJSONResult.ok(imgList);
+			
 	}
 	
 }

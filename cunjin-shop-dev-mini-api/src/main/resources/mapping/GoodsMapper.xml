@@ -14,5 +14,6 @@
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="goods_num" property="goodsNum" jdbcType="INTEGER" />
     <result column="goods_desc" property="goodsDesc" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
   </resultMap>
 </mapper>

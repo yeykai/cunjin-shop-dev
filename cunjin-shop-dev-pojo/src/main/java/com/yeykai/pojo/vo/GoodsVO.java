@@ -1,39 +1,40 @@
-package com.yeykai.pojo;
+package com.yeykai.pojo.vo;
 
 import java.util.Date;
 
 import javax.persistence.*;
 
-public class Goods {
-    @Id
+public class GoodsVO {
+
     private String id;
-
-    @Column(name = "seller_id")
     private String sellerId;
-
-    @Column(name = "goods_name")
     private String goodsName;
-
     private Double price;
-
-    @Column(name = "like_counts")
     private Integer likeCounts;
-
-    @Column(name = "seller_phone")
     private String sellerPhone;
-
     private String address;
-
-    @Column(name = "goods_num")
     private Integer goodsNum;
-
-    @Column(name = "goods_desc")
     private String goodsDesc;
-    
-    @Column(name = "create_time")
     private Date createTime;
+    
 
-    public Date getCreateTime() {
+
+	private String goodsImg;
+    private String nickName;
+    private String avatar_url;
+    private String TimeAgoStr;
+    
+    
+
+    public String getTimeAgoStr() {
+		return TimeAgoStr;
+	}
+
+	public void setTimeAgoStr(String timeAgoStr) {
+		TimeAgoStr = timeAgoStr;
+	}
+
+	public Date getCreateTime() {
 		return createTime;
 	}
 
@@ -41,7 +42,31 @@ public class Goods {
 		this.createTime = createTime;
 	}
     
-    /**
+    public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public String getAvatar_url() {
+		return avatar_url;
+	}
+
+	public void setAvatar_url(String avatar_url) {
+		this.avatar_url = avatar_url;
+	}
+
+	public String getGoodsImg() {
+		return goodsImg;
+	}
+
+	public void setGoodsImg(String goodsImg) {
+		this.goodsImg = goodsImg;
+	}
+
+	/**
      * @return id
      */
     public String getId() {
