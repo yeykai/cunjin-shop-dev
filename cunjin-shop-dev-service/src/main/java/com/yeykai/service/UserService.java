@@ -12,4 +12,6 @@ public interface UserService {
 	
 	//修改用户信息
 	public void updateUser(Users user);
+	
+	public boolean isUserLikeGoods(String userId,String goodsId);
 }

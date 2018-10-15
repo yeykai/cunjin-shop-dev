@@ -32,6 +32,7 @@ public class UserController {
 		user1.setId(userId);
 		return IMoocJSONResult.ok();
 	}
-	
-	
+
+
+
 }

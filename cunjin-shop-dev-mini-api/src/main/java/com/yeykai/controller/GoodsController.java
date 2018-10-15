@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yeykai.pojo.Comments;
 import com.yeykai.pojo.Goods;
 import com.yeykai.pojo.GoodsImg;
 import com.yeykai.pojo.Users;
 import com.yeykai.service.GoodsService;
+import com.yeykai.service.UserService;
 import com.yeykai.utils.IMoocJSONResult;
 import com.yeykai.utils.PagedResult;
 import com.yeykai.utils.RedisOperator;
@@ -42,10 +44,29 @@ public class GoodsController {
 	@Autowired
 	private GoodsService goodsService;
 	
+	@Autowired
+	private UserService userService;
+	
 	
 	@Autowired
 	private Sid sid;
 
+	//通过登录态查询用户OpenId
+	public String getUserOpenId(String thirdSession) {
+		if (StringUtils.isBlank(thirdSession)) {
+			return null;
+		}
+
+        String value = (String) redis.get("Wxuser-redis-session:"+thirdSession);
+        System.out.println(value);
+        if (StringUtils.isBlank(value)) {
+            return null;
+        }
+        //解析json格式的str
+        JSONObject json = JSONObject.parseObject(value);
+        String openId = json.getString("openid");
+		return openId;
+	}
 	
 	@ApiOperation(value="用户发布商品",notes="用户发布商品的接口")
 //	@ApiImplicitParam(name="userId",value="用户id",required=true,
@@ -55,18 +76,8 @@ public class GoodsController {
 			String goodsDesc,double goodsPrice,String goodsPhone,
 			int goodsNum,String goodsAddress) throws Exception {
 		
-		if (StringUtils.isBlank(thirdSession)) {
-			return IMoocJSONResult.errorMsg("thirdSession is none");
-		}
 
-        String value = (String) redis.get("Wxuser-redis-session:"+thirdSession);
-        System.out.println(value);
-        if (StringUtils.isBlank(value)) {
-            return IMoocJSONResult.errorMsg("session timeout");
-        }
-        //解析json格式的str
-        JSONObject json = JSONObject.parseObject(value);
-        String openId = json.getString("openid");
+        String openId = getUserOpenId(thirdSession);
 		
         String goodsId = sid.nextShort();
 		
@@ -170,4 +181,60 @@ public class GoodsController {
 			
 	}
 	
+	@PostMapping(value="/userLike")
+	public IMoocJSONResult userLike(String thirdSession,String goodsId,String sellerId) throws Exception{	
+        String userId = getUserOpenId(thirdSession);
+		goodsService.userLikeVideo(userId, goodsId, sellerId);
+		return IMoocJSONResult.ok();	
+	}
+	
+	@PostMapping(value="/userUnLike")
+	public IMoocJSONResult userUnLike(String thirdSession,String goodsId,String sellerId) throws Exception{	
+        String userId = getUserOpenId(thirdSession);
+ 		goodsService.userUnLikeVideo(userId, goodsId, sellerId);
+		return IMoocJSONResult.ok();	
+	}
+	
+	@PostMapping("/queryUserLikeGoods")
+	public IMoocJSONResult queryUserLikeGoods(String thirdSession,String goodsId) throws Exception {
+	    String userId = getUserOpenId(thirdSession);
+		boolean islike = userService.isUserLikeGoods(userId, goodsId);
+		return IMoocJSONResult.ok(islike);
+	}
+	
+	@PostMapping("/saveComment")
+	public IMoocJSONResult saveComment(@RequestBody Comments comment, String thirdSession,
+			String fatherCommentId, String toUserId) throws Exception {
+	    
+		String userId = getUserOpenId(thirdSession);
+		comment.setFromUserId(userId);
+	    
+		comment.setFatherCommentId(fatherCommentId);
+		comment.setToUserId(toUserId);
+		
+		goodsService.saveComment(comment);
+		System.out.println(comment.getComment());
+		return IMoocJSONResult.ok();
+	}
+	
+	@PostMapping("/getGoodsComments")
+	public IMoocJSONResult getGoodsComments(String goodsId, Integer page, Integer pageSize) throws Exception {
+		
+		if (StringUtils.isBlank(goodsId)) {
+			return IMoocJSONResult.ok();
+		}
+		
+		// 分页查询视频列表，时间顺序倒序排序
+		if (page == null) {
+			page = 1;
+		}
+
+		if (pageSize == null) {
+			pageSize = 10;
+		}
+		
+		PagedResult list = goodsService.getAllComments(goodsId, page, pageSize);
+		
+		return IMoocJSONResult.ok(list);
+	}
 }

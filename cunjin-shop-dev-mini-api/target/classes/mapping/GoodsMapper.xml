@@ -16,4 +16,12 @@
     <result column="goods_desc" property="goodsDesc" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
   </resultMap>
+  
+	    <update id="addGoodsLikeCount" parameterType="String">
+	  	update goods set like_counts=like_counts+1 where id=#{goodsId}
+	  </update>
+	  
+	    <update id="reduceGoodsLikeCount" parameterType="String">
+	  	update goods set like_counts=like_counts-1 where id=#{goodsId}
+	  </update>
 </mapper>
